@@ -1,0 +1,148 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+import { readingTime } from '../utils/readingTime';
+import Subscribe from '../components/Subscribe.astro';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="hero">
+				<p class="eyebrow">Research &amp; infrastructure</p>
+				<h1>Responsible AI, from the inside out.</h1>
+				<p class="tagline">
+					Hard-won lessons at the intersection of AI security, adversarial evaluation, and agentic
+					systems — written by a practitioner for practitioners.
+				</p>
+			</section>
+
+			<section class="posts">
+				<h2 class="section-label">Latest</h2>
+				<ul>
+					{posts.map((post) => (
+						<li>
+							<a href={`/blog/${post.id}/`}>
+								<div class="post-meta">
+									<FormattedDate date={post.data.pubDate} />
+									<span class="dot">·</span>
+									<span>{readingTime(post.body ?? '')}</span>
+								</div>
+								<h3>{post.data.title}</h3>
+								{post.data.description && <p class="description">{post.data.description}</p>}
+								{post.data.tags && post.data.tags.length > 0 && (
+									<div class="tags">
+										{post.data.tags.map((tag: string) => (
+											<span class="tag">{tag}</span>
+										))}
+									</div>
+								)}
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+			<Subscribe />
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.hero {
+		padding: 3rem 0 3.5rem;
+		border-bottom: 1px solid var(--border);
+		margin-bottom: 3rem;
+	}
+	.eyebrow {
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--accent);
+		margin: 0 0 1rem 0;
+	}
+	.hero h1 {
+		font-size: 2.6rem;
+		line-height: 1.15;
+		margin: 0 0 1rem 0;
+		max-width: 560px;
+	}
+	.tagline {
+		font-size: 1rem;
+		color: var(--text-muted);
+		max-width: 520px;
+		margin: 0;
+		line-height: 1.6;
+	}
+	.section-label {
+		font-family: var(--font-body);
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--text-subtle);
+		margin: 0 0 1.5rem 0;
+	}
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	li {
+		border-bottom: 1px solid var(--border);
+	}
+	li:first-child {
+		border-top: 1px solid var(--border);
+	}
+	li a {
+		display: block;
+		padding: 1.5rem 0;
+		text-decoration: none;
+		color: inherit;
+	}
+	li a:hover h3 {
+		color: var(--accent);
+	}
+	.post-meta {
+		font-size: 0.8rem;
+		color: var(--text-subtle);
+		margin-bottom: 0.4rem;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+	.dot {
+		color: var(--border);
+	}
+	li h3 {
+		font-size: 1.2rem;
+		margin: 0 0 0.4rem 0;
+		line-height: 1.3;
+		transition: color 0.15s;
+	}
+	.description {
+		font-size: 0.9rem;
+		color: var(--text-muted);
+		margin: 0 0 0.75rem 0;
+		line-height: 1.55;
+	}
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+</style>

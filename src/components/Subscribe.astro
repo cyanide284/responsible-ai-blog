@@ -1,0 +1,118 @@
+---
+const BUTTONDOWN_USERNAME = 'cyanide';
+---
+
+<section class="subscribe">
+	<div class="subscribe-inner">
+		<div class="subscribe-text">
+			<h3>Stay in the loop</h3>
+			<p>New posts on AI security, responsible AI evaluation, and agentic systems — no noise, no cadence pressure. When there's something worth reading, it lands in your inbox.</p>
+		</div>
+		<form
+			action={`https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USERNAME}`}
+			method="post"
+			target="popupwindow"
+			class="subscribe-form"
+		>
+			<div class="input-row">
+				<input
+					type="email"
+					name="email"
+					id="bd-email"
+					placeholder="you@example.com"
+					required
+					autocomplete="email"
+				/>
+				<button type="submit">Subscribe</button>
+			</div>
+			<p class="subscribe-note">No spam. Unsubscribe any time. Powered by <a href="https://buttondown.com" target="_blank" rel="noopener">Buttondown</a>.</p>
+		</form>
+	</div>
+</section>
+
+<style>
+	.subscribe {
+		margin: 3rem 0 0;
+		padding: 2.5rem;
+		background: var(--bg-subtle);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+	}
+	.subscribe-inner {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2.5rem;
+		align-items: center;
+	}
+	.subscribe-text h3 {
+		font-size: 1.3rem;
+		margin: 0 0 0.5rem;
+	}
+	.subscribe-text p {
+		font-size: 0.9rem;
+		color: var(--text-muted);
+		margin: 0;
+		line-height: 1.6;
+	}
+	.subscribe-form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.input-row {
+		display: flex;
+		gap: 0.5rem;
+	}
+	input[type="email"] {
+		flex: 1;
+		font-family: var(--font-body);
+		font-size: 0.9rem;
+		padding: 0.6rem 0.9rem;
+		border: 1px solid var(--border);
+		border-radius: 5px;
+		background: white;
+		color: var(--text);
+		outline: none;
+		transition: border-color 0.15s;
+	}
+	input[type="email"]:focus {
+		border-color: var(--accent);
+	}
+	input[type="email"]::placeholder {
+		color: var(--text-subtle);
+	}
+	button {
+		font-family: var(--font-body);
+		font-size: 0.9rem;
+		font-weight: 600;
+		padding: 0.6rem 1.25rem;
+		background: var(--accent);
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: background 0.15s;
+	}
+	button:hover {
+		background: var(--accent-hover);
+	}
+	.subscribe-note {
+		font-size: 0.75rem;
+		color: var(--text-subtle);
+		margin: 0;
+	}
+	.subscribe-note a {
+		color: var(--text-subtle);
+		text-decoration: underline;
+	}
+	@media (max-width: 640px) {
+		.subscribe-inner {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+		.subscribe {
+			padding: 1.75rem;
+		}
+	}
+</style>

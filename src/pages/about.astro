@@ -1,0 +1,224 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="About | responsible-ai.blog" description="About the author" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>About</h1>
+
+			<p>
+				I'm <strong>Abhinav Mohanty</strong> — a GenAI researcher and red teamer with a background in systems security and responsible AI
+				evaluation. My interests span the full responsible AI spectrum: adversarial robustness and red teaming,
+				safety and alignment, deception and scheming behaviors, fairness and bias, societal risk, and the
+				evaluation infrastructure that makes any of this measurable. The common thread is the same question —
+				how do you actually know whether an AI system is behaving the way it should?
+			</p>
+
+			<p>
+				This blog is where I think in public about responsible AI evaluation — the hard measurement
+				problems, failure modes, and open questions that don't often get written down clearly. The goal
+				is signal, not volume — posts that a practitioner would find worth reading, grounded in
+				evidence and firsthand experiment.
+			</p>
+
+			<h2>Disclaimer</h2>
+
+			<p>
+				The analyses published on this site are based exclusively on publicly available information,
+				open literature, and independent reasoning.
+			</p>
+			<p>
+				They do not reference, reflect, or rely upon any non-public systems, data, processes, or
+				internal deliberations of any organization.
+			</p>
+			<p>
+				Any views expressed here are the author's own and are not intended to represent the positions,
+				policies, or perspectives of any current or former employer or affiliated institution.
+			</p>
+
+			<h2>Scope &amp; methodology</h2>
+
+			<p>This blog focuses on:</p>
+			<ul>
+				<li>System-level analysis of responsible AI practices</li>
+				<li>Evaluation methodologies and their limitations</li>
+				<li>Cross-industry patterns and failure modes</li>
+				<li>Long-horizon and adversarial risk dynamics</li>
+			</ul>
+
+			<p>This blog does not:</p>
+			<ul>
+				<li>Analyze or comment on the internal practices of specific organizations</li>
+				<li>Discuss ongoing or recent incidents involving organizations the author is affiliated with</li>
+				<li>Provide operational details that could enable misuse</li>
+				<li>Offer legal, policy, or compliance advice</li>
+			</ul>
+
+			<p>
+				All analyses are framed at an abstract or generalized level to avoid attribution to any single
+				system or organization.
+			</p>
+
+			<h2>Research background</h2>
+
+			<p>
+				My doctoral work was on Inline Reference Monitors (IRMs) — runtime policy enforcement
+				mechanisms embedded directly into code. I applied this across several security domains: Adobe
+				Flash applications, hybrid mobile apps (where web and native code share the same runtime),
+				hybrid IoT companion apps, and control-flow hijacking vulnerabilities in IoT firmware. The
+				thread across all of it is the same problem: how do you enforce security policy on a system
+				you don't fully control, at runtime, without rewriting it from scratch?
+			</p>
+
+			<p>
+				That question maps cleanly onto what's now called agentic AI security — how do you constrain
+				an autonomous system's behavior over time, across tool calls and memory, in ways that hold even
+				when the system is doing things its designers didn't anticipate? The technical context has
+				changed; the problem structure hasn't.
+			</p>
+
+			<p>
+				On the GenAI side, I contributed to the Amazon Nova technical report and work on responsible AI
+				evaluation, red teaming, and adversarial testing methodology. I've also published on using
+				gamification to teach IoT cybersecurity — building interactive, CTF-style experiences to
+				improve student engagement with security concepts.
+			</p>
+
+			<h2>Selected publications</h2>
+
+			<table>
+				<thead>
+					<tr>
+						<th>Paper</th>
+						<th>Venue</th>
+						<th>Year</th>
+						<th>Citations</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<a href="https://scholar.google.com/scholar?q=Amazon+Nova+Family+of+Models+Technical+Report+Model+Card" target="_blank" rel="noopener">
+								The Amazon Nova Family of Models: Technical Report and Model Card
+							</a>
+						</td>
+						<td>Amazon / arXiv</td>
+						<td>2024</td>
+						<td>54</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="https://scholar.google.com/scholar?q=HybriGuard+Principal-Based+Permission+Policy+Enforcement+Web+Mobile+Applications" target="_blank" rel="noopener">
+								HybriGuard: IRM-Based Policy Enforcement for Hybrid Mobile Apps
+							</a>
+						</td>
+						<td>IEEE S&amp;P Workshops</td>
+						<td>2017</td>
+						<td>31</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="https://scholar.google.com/scholar?q=Control-Hijacking+Vulnerabilities+IoT+Firmware+Brief+Survey" target="_blank" rel="noopener">
+								Control-Hijacking Vulnerabilities in IoT Firmware: A Brief Survey
+							</a>
+						</td>
+						<td>IoT Security &amp; Privacy Workshop</td>
+						<td>2018</td>
+						<td>28</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="https://scholar.google.com/scholar?q=HybriDiagnostics+Evaluating+Security+Issues+Hybrid+SmartHome+Companion+Apps" target="_blank" rel="noopener">
+								HybriDiagnostics: Security Issues in Hybrid SmartHome Companion Apps
+							</a>
+						</td>
+						<td>IEEE S&amp;P Workshops</td>
+						<td>2021</td>
+						<td>14</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="https://scholar.google.com/scholar?q=Criminal+Investigations+Interactive+Experience+Student+Engagement+Cybersecurity+Courses" target="_blank" rel="noopener">
+								Criminal Investigations: Gamification for IoT Cybersecurity Education
+							</a>
+						</td>
+						<td>ACM SIGCSE</td>
+						<td>2022</td>
+						<td>12</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<p class="scholar-link">
+				Full list on <a
+					href="https://scholar.google.com/citations?user=XbLh3_YAAAAJ"
+					target="_blank" rel="noopener">Google Scholar</a
+				> &middot; 177 citations &middot; h-index 6
+			</p>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	h2 {
+		margin-top: 2rem;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.875rem;
+		margin: 1rem 0;
+	}
+	thead tr {
+		border-bottom: 2px solid var(--border);
+	}
+	th {
+		text-align: left;
+		padding: 0.5rem 1rem 0.5rem 0;
+		color: var(--text-muted);
+		font-weight: 600;
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+	td {
+		padding: 0.65rem 1rem 0.65rem 0;
+		border-bottom: 1px solid var(--border);
+		vertical-align: top;
+		line-height: 1.5;
+	}
+	td a {
+		color: var(--text);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-thickness: 1px;
+		text-decoration-color: var(--border);
+	}
+	td a:hover {
+		color: var(--accent);
+		text-decoration-color: var(--accent);
+	}
+	td:last-child {
+		text-align: right;
+		color: var(--text-muted);
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+	}
+	tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.scholar-link {
+		font-size: 0.875rem;
+		color: var(--text-muted);
+		margin-top: 0.75rem;
+	}
+</style>
