@@ -7,10 +7,11 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { readingTime } from '../utils/readingTime';
 import Subscribe from '../components/Subscribe.astro';
+import AudioPlayer from '../components/AudioPlayer.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & { body?: string };
 
-const { title, description, pubDate, updatedDate, heroImage, tags, series, seriesPart, readingTime: readingTimeOverride, body } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags, series, seriesPart, readingTime: readingTimeOverride, audio, body } = Astro.props;
 const rt = readingTimeOverride ?? (body ? readingTime(body) : '');
 const seriesSlug = series ? series.toLowerCase().replace(/\s+/g, '-') : '';
 ---
@@ -52,6 +53,7 @@ const seriesSlug = series ? series.toLowerCase().replace(/\s+/g, '-') : '';
 						<figcaption>Generated with ChatGPT</figcaption>
 					</figure>
 				)}
+				{audio && <AudioPlayer />}
 				<div class="prose">
 					<slot />
 				</div>

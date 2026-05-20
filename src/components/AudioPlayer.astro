@@ -1,0 +1,386 @@
+---
+// Browser-native TTS for blog posts. Reads the .prose article body using
+// the Web Speech API. Skips code blocks, pre, and figures. No external
+// dependencies, no API keys, no cost.
+---
+
+<div class="audio-player" id="audio-player">
+	<button class="audio-toggle" id="audio-toggle" type="button" aria-label="Listen to this post">
+		<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+			<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+		</svg>
+		<span class="audio-toggle-text">Listen</span>
+	</button>
+	<div class="audio-controls" id="audio-controls" hidden>
+		<button class="audio-btn" id="audio-play-pause" type="button" aria-label="Pause">
+			<span class="play-icon" aria-hidden="true">▶</span>
+			<span class="pause-icon" aria-hidden="true" hidden>❚❚</span>
+		</button>
+		<button class="audio-btn" id="audio-stop" type="button" aria-label="Stop">
+			<span aria-hidden="true">■</span>
+		</button>
+		<select id="audio-voice" class="audio-select" aria-label="Voice"></select>
+		<select id="audio-speed" class="audio-select" aria-label="Playback speed">
+			<option value="0.85">0.85×</option>
+			<option value="1" selected>1×</option>
+			<option value="1.15">1.15×</option>
+			<option value="1.35">1.35×</option>
+			<option value="1.6">1.6×</option>
+		</select>
+		<span class="audio-status" id="audio-status" aria-live="polite"></span>
+	</div>
+	<p class="audio-unsupported" id="audio-unsupported" hidden>
+		Your browser doesn't support text-to-speech. Try Safari, Chrome, or Edge.
+	</p>
+</div>
+
+<script>
+	(function () {
+		const player = document.getElementById('audio-player');
+		const toggleBtn = document.getElementById('audio-toggle') as HTMLButtonElement | null;
+		const controls = document.getElementById('audio-controls') as HTMLDivElement | null;
+		const playPauseBtn = document.getElementById('audio-play-pause') as HTMLButtonElement | null;
+		const stopBtn = document.getElementById('audio-stop') as HTMLButtonElement | null;
+		const voiceSelect = document.getElementById('audio-voice') as HTMLSelectElement | null;
+		const speedSelect = document.getElementById('audio-speed') as HTMLSelectElement | null;
+		const statusEl = document.getElementById('audio-status') as HTMLSpanElement | null;
+		const playIcon = playPauseBtn?.querySelector('.play-icon') as HTMLSpanElement | null;
+		const pauseIcon = playPauseBtn?.querySelector('.pause-icon') as HTMLSpanElement | null;
+		const unsupportedEl = document.getElementById('audio-unsupported') as HTMLParagraphElement | null;
+
+		if (!player || !toggleBtn || !controls || !playPauseBtn || !stopBtn || !voiceSelect || !speedSelect || !statusEl) {
+			return;
+		}
+
+		if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+			toggleBtn.hidden = true;
+			if (unsupportedEl) unsupportedEl.hidden = false;
+			return;
+		}
+
+		const synth = window.speechSynthesis;
+		let voices: SpeechSynthesisVoice[] = [];
+		let textChunks: string[] = [];
+		let currentChunkIndex = 0;
+		let isPlaying = false;
+		let isStopped = true;
+
+		// macOS / iOS voices are noticeably better. These names are common across
+		// modern Apple OS releases. Sort so they show up first in the dropdown.
+		const preferredVoiceNames = [
+			'Google UK English Male',
+			'Google UK English Female',
+			'Google US English',
+			'Microsoft Aria', 'Microsoft Jenny',
+			'Daniel', 'Samantha', 'Karen', 'Moira', 'Tessa', 'Allison',
+			'Ava', 'Susan', 'Veena', 'Fiona', 'Serena',
+		];
+
+		function rankVoice(name: string): number {
+			for (let i = 0; i < preferredVoiceNames.length; i++) {
+				if (name.includes(preferredVoiceNames[i])) return i;
+			}
+			return preferredVoiceNames.length;
+		}
+
+		function loadVoices() {
+			voices = synth.getVoices().filter((v) => v.lang.toLowerCase().startsWith('en'));
+			voices.sort((a, b) => {
+				const ra = rankVoice(a.name);
+				const rb = rankVoice(b.name);
+				if (ra !== rb) return ra - rb;
+				return a.name.localeCompare(b.name);
+			});
+			const newOptions: HTMLOptionElement[] = [];
+			voices.forEach((voice, i) => {
+				const option = document.createElement('option');
+				option.value = String(i);
+				option.textContent = `${voice.name}${voice.localService ? '' : ' (cloud)'}`;
+				newOptions.push(option);
+			});
+			if (voices.length === 0) {
+				const option = document.createElement('option');
+				option.textContent = 'No English voices available';
+				option.disabled = true;
+				newOptions.push(option);
+			}
+			voiceSelect.replaceChildren(...newOptions);
+		}
+
+		loadVoices();
+		if (typeof synth.addEventListener === 'function') {
+			synth.addEventListener('voiceschanged', loadVoices);
+		} else {
+			synth.onvoiceschanged = loadVoices;
+		}
+
+		const SKIP_TAGS = new Set(['PRE', 'CODE', 'FIGURE', 'SCRIPT', 'STYLE', 'NOSCRIPT']);
+		const BLOCK_TAGS = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE']);
+
+		function extractText(): string[] {
+			const prose = document.querySelector('.prose');
+			if (!prose) return [];
+
+			const chunks: string[] = [];
+
+			function textFromBlock(node: Element): string {
+				let result = '';
+				node.childNodes.forEach((child) => {
+					if (child.nodeType === Node.ELEMENT_NODE) {
+						const el = child as Element;
+						if (SKIP_TAGS.has(el.tagName)) return;
+						result += textFromBlock(el) + ' ';
+					} else if (child.nodeType === Node.TEXT_NODE) {
+						result += (child.textContent || '') + ' ';
+					}
+				});
+				return result;
+			}
+
+			function walk(node: Node) {
+				if (node.nodeType === Node.ELEMENT_NODE) {
+					const el = node as Element;
+					if (SKIP_TAGS.has(el.tagName)) return;
+					if (BLOCK_TAGS.has(el.tagName)) {
+						const text = textFromBlock(el).replace(/\s+/g, ' ').trim();
+						if (text) chunks.push(text);
+						return;
+					}
+				}
+				node.childNodes.forEach(walk);
+			}
+
+			walk(prose);
+			return chunks;
+		}
+
+		function updatePlayPauseUI() {
+			if (!playIcon || !pauseIcon) return;
+			if (isPlaying) {
+				playIcon.hidden = true;
+				pauseIcon.hidden = false;
+				playPauseBtn.setAttribute('aria-label', 'Pause');
+			} else {
+				playIcon.hidden = false;
+				pauseIcon.hidden = true;
+				playPauseBtn.setAttribute('aria-label', 'Play');
+			}
+		}
+
+		function updateStatus() {
+			if (!textChunks.length) {
+				statusEl.textContent = '';
+				return;
+			}
+			const shown = Math.min(currentChunkIndex + 1, textChunks.length);
+			statusEl.textContent = `${shown} / ${textChunks.length}`;
+		}
+
+		function speakChunk(index: number) {
+			if (index >= textChunks.length) {
+				isPlaying = false;
+				isStopped = true;
+				currentChunkIndex = 0;
+				updatePlayPauseUI();
+				updateStatus();
+				return;
+			}
+			currentChunkIndex = index;
+			const utterance = new SpeechSynthesisUtterance(textChunks[index]);
+			const voiceIndex = parseInt(voiceSelect.value, 10);
+			if (!isNaN(voiceIndex) && voices[voiceIndex]) {
+				utterance.voice = voices[voiceIndex];
+				utterance.lang = voices[voiceIndex].lang;
+			}
+			utterance.rate = parseFloat(speedSelect.value) || 1;
+			utterance.onend = () => {
+				if (isPlaying && !isStopped) {
+					speakChunk(index + 1);
+				}
+			};
+			utterance.onerror = (e) => {
+				const err = (e as SpeechSynthesisErrorEvent).error;
+				// Don't surface "interrupted" / "canceled" — expected when pausing, stopping, or changing settings.
+				if (err !== 'interrupted' && err !== 'canceled') {
+					console.error('TTS error:', e);
+				}
+			};
+			synth.speak(utterance);
+			updateStatus();
+		}
+
+		function startReading() {
+			if (!textChunks.length) {
+				textChunks = extractText();
+			}
+			if (!textChunks.length) {
+				statusEl.textContent = 'Nothing to read';
+				return;
+			}
+			synth.cancel();
+			isStopped = false;
+			isPlaying = true;
+			updatePlayPauseUI();
+			speakChunk(0);
+		}
+
+		function stopReading() {
+			synth.cancel();
+			isPlaying = false;
+			isStopped = true;
+			currentChunkIndex = 0;
+			updatePlayPauseUI();
+			updateStatus();
+		}
+
+		toggleBtn.addEventListener('click', () => {
+			if (controls.hidden) {
+				controls.hidden = false;
+				toggleBtn.classList.add('open');
+				startReading();
+			} else {
+				stopReading();
+				controls.hidden = true;
+				toggleBtn.classList.remove('open');
+			}
+		});
+
+		playPauseBtn.addEventListener('click', () => {
+			if (isPlaying) {
+				synth.pause();
+				isPlaying = false;
+			} else if (isStopped) {
+				startReading();
+			} else if (synth.paused) {
+				synth.resume();
+				isPlaying = true;
+			} else {
+				speakChunk(currentChunkIndex);
+				isPlaying = true;
+			}
+			updatePlayPauseUI();
+		});
+
+		stopBtn.addEventListener('click', stopReading);
+
+		speedSelect.addEventListener('change', () => {
+			if (!isStopped) {
+				synth.cancel();
+				speakChunk(currentChunkIndex);
+			}
+		});
+
+		voiceSelect.addEventListener('change', () => {
+			if (!isStopped) {
+				synth.cancel();
+				speakChunk(currentChunkIndex);
+			}
+		});
+
+		// Stop speech when navigating away; otherwise it can continue after the page changes.
+		window.addEventListener('beforeunload', () => synth.cancel());
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden && isPlaying) {
+				synth.pause();
+				isPlaying = false;
+				updatePlayPauseUI();
+			}
+		});
+	})();
+</script>
+
+<style>
+	.audio-player {
+		margin: 0 0 2rem 0;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		background: var(--bg-subtle);
+		font-size: 0.85rem;
+	}
+	.audio-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: none;
+		border: none;
+		color: var(--text);
+		font-family: var(--font-body);
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+		padding: 0.2rem 0;
+		transition: color 0.15s;
+	}
+	.audio-toggle:hover {
+		color: var(--accent);
+	}
+	.audio-toggle.open .audio-toggle-text::after {
+		content: ' (stop)';
+		font-weight: 400;
+		color: var(--text-muted);
+	}
+	.audio-toggle svg {
+		flex-shrink: 0;
+	}
+	.audio-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.65rem;
+		padding-top: 0.65rem;
+		border-top: 1px solid var(--border);
+	}
+	.audio-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.9rem;
+		height: 1.9rem;
+		background: white;
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		color: var(--text);
+		font-size: 0.7rem;
+		cursor: pointer;
+		transition: all 0.15s;
+	}
+	.audio-btn:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+	.audio-select {
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		padding: 0.3rem 0.5rem;
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		background: white;
+		color: var(--text);
+		max-width: 12rem;
+	}
+	.audio-status {
+		font-size: 0.75rem;
+		color: var(--text-subtle);
+		font-variant-numeric: tabular-nums;
+		margin-left: auto;
+	}
+	.audio-unsupported {
+		font-size: 0.8rem;
+		color: var(--text-subtle);
+		margin: 0;
+	}
+	@media (max-width: 540px) {
+		.audio-controls {
+			gap: 0.4rem;
+		}
+		.audio-select {
+			max-width: 7rem;
+		}
+		.audio-status {
+			margin-left: 0;
+		}
+	}
+</style>

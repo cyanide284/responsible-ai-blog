@@ -7,6 +7,7 @@ tags: ['Evaluation', 'Methodology', 'Interpretability', 'Red Teaming']
 series: 'Evaluation Methodology'
 seriesPart: 1
 readingTime: '13 min read'
+audio: true
 ---
 
 My mom is a neuropsychologist at PGIMER, one of India's main medical research institutes. She works in the neurosurgery department, which means her job is the bridge between "what does the brain scan show" and "what can the patient actually do." Neither answer alone is enough. The combination is the standard of care.

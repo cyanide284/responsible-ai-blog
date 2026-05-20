@@ -15,6 +15,7 @@ const blog = defineCollection({
 			series: z.string().optional(),
 			seriesPart: z.number().optional(),
 			readingTime: z.string().optional(),
+			audio: z.boolean().optional(),
 		}),
 });
 
