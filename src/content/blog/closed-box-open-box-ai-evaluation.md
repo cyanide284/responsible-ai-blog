@@ -2,7 +2,7 @@
 title: "Closed-Box, Open-Box: AI Evaluation's Missing Loop"
 description: 'Behavioral evals and mechanistic interpretability are usually framed as two camps. They are not. They are two halves of a method neuropsychology has been refining for decades.'
 pubDate: 2026-05-13
-heroImage: ''
+heroImage: '../../assets/closed-box-open-box-hero.png'
 tags: ['Evaluation', 'Methodology', 'Interpretability', 'Red Teaming']
 series: 'Evaluation Methodology'
 seriesPart: 1
