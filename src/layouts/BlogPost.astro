@@ -10,8 +10,9 @@ import Subscribe from '../components/Subscribe.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & { body?: string };
 
-const { title, description, pubDate, updatedDate, heroImage, tags, body } = Astro.props;
-const rt = body ? readingTime(body) : '';
+const { title, description, pubDate, updatedDate, heroImage, tags, series, seriesPart, readingTime: readingTimeOverride, body } = Astro.props;
+const rt = readingTimeOverride ?? (body ? readingTime(body) : '');
+const seriesSlug = series ? series.toLowerCase().replace(/\s+/g, '-') : '';
 ---
 
 <html lang="en">
@@ -23,6 +24,12 @@ const rt = body ? readingTime(body) : '';
 		<main>
 			<article>
 				<header class="post-header">
+					{series && (
+						<div class={`series-chip series-${seriesSlug}`}>
+							<span class="series-name">{series}</span>
+							{seriesPart && <><span class="series-sep">·</span><span class="series-part">Part {seriesPart}</span></>}
+						</div>
+					)}
 					<div class="post-meta">
 						<FormattedDate date={pubDate} />
 						{rt && <><span class="dot">·</span><span>{rt}</span></>}
@@ -62,6 +69,23 @@ const rt = body ? readingTime(body) : '';
 	.post-header {
 		margin-bottom: 2.5rem;
 	}
+	.series-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.3rem 0.65rem;
+		border-radius: 4px;
+		background: var(--accent);
+		color: white;
+		margin-bottom: 0.85rem;
+	}
+	.series-chip .series-sep { opacity: 0.6; }
+	.series-chip .series-part { font-weight: 500; }
+	.series-chip.series-evaluation-methodology { background: #475569; }
 	.post-meta {
 		font-size: 0.8rem;
 		color: var(--text-subtle);

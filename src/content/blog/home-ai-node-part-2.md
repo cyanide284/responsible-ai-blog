@@ -1,12 +1,15 @@
 ---
 title: 'Building a Home AI Inference Node, Part 2: Adding llama.cpp and Going From Chat Server to Research Workstation'
-description: 'Part 1 made the node stable. Part 2 makes it useful for research — adding llama.cpp as a second runtime, GGUF model control, and the OpenAI-compatible API that ties it together.'
+description: 'Part 1 made the node stable. Part 2 makes it useful for research: adding llama.cpp as a second runtime, GGUF model control, and the OpenAI-compatible API that ties it together.'
 pubDate: 2026-05-12
 heroImage: '../../assets/home-ai-node-part2-hero.png'
 tags: ['Infrastructure', 'llama.cpp', 'Home Lab', 'Evaluation']
+series: 'Home AI Lab'
+seriesPart: 2
+readingTime: '10 min read'
 ---
 
-Part 1 was about getting the infrastructure stable — WSL, Ollama, OpenWebUI, Windows networking, the dual-identity trap, and startup automation. By the end of that, the node was persistent and LAN-accessible:
+Part 1 was about getting the infrastructure stable: WSL, Ollama, OpenWebUI, Windows networking, the dual-identity trap, and startup automation. By the end of that, the node was persistent and LAN-accessible:
 
 ```
 MacBook
@@ -20,7 +23,9 @@ Ollama + OpenWebUI
 RTX 3060 Ti
 ```
 
-That's useful, but it's still mostly a convenience stack. For research — benchmarking, model comparison, adversarial evaluation — I need more control than Ollama alone provides. That's what Part 2 is about.
+That's useful, but it's still mostly a convenience stack. For research (benchmarking, model comparison, adversarial evaluation), I need more control than Ollama alone provides. That's what Part 2 is about.
+
+A note on extractability, same as Part 1. The diagrams show my specific setup (Windows desktop + MacBook client), but the body uses "client" generically, since VS Code Remote SSH and the OpenSSH config syntax are identical across macOS, Linux, and Windows. If you're running everything on a single Windows PC, the llama.cpp build, GCC pinning, systemd service, and OpenAI-compatible API sections all still apply directly. The remote dev workflow section is the only part that assumes two machines, and even then, swapping the client is a one-line change.
 
 ---
 
@@ -32,7 +37,7 @@ But Ollama abstracts away details I care about for research:
 
 - Which exact GGUF file is being served
 - What quantization level, and what the tradeoffs actually are
-- GPU offload — how many layers, and what happens when you change that
+- GPU offload: how many layers, and what happens when you change that
 - Context size behavior
 - Server flags and their effects on output quality and latency
 
@@ -68,7 +73,7 @@ The specific command matters less than what it represents: I can now ask questio
 - How does Q4_0 quantization compare to Q5_K_M on the same prompt?
 - How does this model's behavior differ between Ollama and llama.cpp serving the same GGUF?
 
-On an RTX 3060 Ti with 8GB VRAM, those questions matter. The VRAM ceiling is real — quantization, context length, and layer offload choices can mean the difference between a model running smoothly or thrashing. Being able to tune these explicitly is what makes the node feel like a workstation rather than a black box.
+On an RTX 3060 Ti with 8GB VRAM, those questions matter. The VRAM ceiling is real: quantization, context length, and layer offload choices can mean the difference between a model running smoothly or thrashing. Being able to tune these explicitly is what makes the node feel like a workstation rather than a black box.
 
 ---
 
@@ -93,7 +98,7 @@ llama.cpp has no install script equivalent to Ollama's one-liner. Inside WSL Ubu
 sudo apt update
 sudo apt install -y git cmake build-essential
 
-git clone https://github.com/ggerganov/llama.cpp
+git clone https://github.com/ggml-org/llama.cpp
 cd llama.cpp
 
 cmake -B build \
@@ -103,7 +108,7 @@ cmake -B build \
 cmake --build build --config Release -j"$(nproc)"
 ```
 
-`-DGGML_CUDA=ON` is the flag that matters. Without it, llama.cpp builds and runs, but silently falls back to CPU — no GPU acceleration. The binary ends up at `build/bin/llama-server`.
+`-DGGML_CUDA=ON` is the flag that matters. Without it, llama.cpp builds and runs but falls back to CPU with no GPU acceleration. Recent versions log a warning at startup if no usable GPU is found (`warning: no usable GPU found, --gpu-layers option will be ignored`), so it's not actually silent, but it's still easy to miss if you don't read the startup output. The binary ends up at `build/bin/llama-server`.
 
 ---
 
@@ -122,7 +127,7 @@ CMake flags
 llama.cpp commit
 ```
 
-Any of those being slightly misaligned can produce an nvcc crash with no useful error message. The fix was to pin GCC and G++ to version 11, which has broader CUDA compatibility, and pass the compiler paths explicitly:
+Any of those being slightly misaligned can produce an nvcc crash with no useful error message. The fix was to pin GCC and G++ to version 11 (CUDA toolkits typically lag behind the newest GCC, and version 11 has broad compatibility with the CUDA 12 series I was using) and pass the compiler paths explicitly:
 
 ```bash
 sudo apt install -y gcc-11 g++-11
@@ -144,7 +149,7 @@ That completed cleanly. The lesson is the same as the networking bugs in Part 1:
 
 ## Making llama-server persistent
 
-Running `llama-server` from a terminal isn't infrastructure, it stops when the session closes. Same approach as Ollama in Part 1: a systemd service.
+Running `llama-server` from a terminal isn't infrastructure. It stops when the session closes. Same approach as Ollama in Part 1: a systemd service.
 
 The service file at `/etc/systemd/system/llama-server.service`:
 
@@ -174,7 +179,7 @@ sudo systemctl enable llama-server
 sudo systemctl start llama-server
 ```
 
-`--host 0.0.0.0` and `-ngl 999` are the two flags that matter most here — the first makes it reachable over LAN, the second puts all layers on the GPU. Everything else is per-experiment.
+`--host 0.0.0.0` and `-ngl 999` are the two flags that matter most here: the first makes it reachable over LAN, the second puts all layers on the GPU. Everything else is per-experiment.
 
 ---
 
@@ -200,7 +205,7 @@ Models endpoint:
 curl http://localhost:8080/v1/models
 ```
 
-It returned a Gemma 3 1B GGUF — small, fast, and a good starting point for verifying the serving path before loading anything larger.
+It returned a Gemma 3 1B GGUF: small, fast, and a good starting point for verifying the serving path before loading anything larger.
 
 ---
 
@@ -229,7 +234,7 @@ Response:
 }
 ```
 
-That OpenAI-compatible interface is what makes llama.cpp pluggable into anything built against the OpenAI API format — eval scripts, LangChain, custom tooling, OpenWebUI itself. From the Mac, the same endpoint is reachable at `http://192.168.1.201:8080`.
+That OpenAI-compatible interface is what makes llama.cpp pluggable into anything built against the OpenAI API format: eval scripts, LangChain, custom tooling, OpenWebUI itself. From the Mac, the same endpoint is reachable at `http://192.168.1.201:8080`.
 
 The node now has two independent model-serving paths reachable over LAN:
 
@@ -263,15 +268,15 @@ Worth mentioning because it's easy to misread as a server error when you're firs
 
 ## Remote development workflow
 
-Once the node was reachable over LAN, I set up VS Code Remote SSH from the MacBook directly into the WSL Ubuntu environment on the desktop. The MacBook stays the daily driver — editor, browser, everything else. The desktop provides the GPU-backed Linux runtime. VS Code bridges them transparently.
+Once the node was reachable over LAN, I set up VS Code Remote SSH from the MacBook directly into the WSL Ubuntu environment on the desktop. The client stays the daily driver: editor, browser, everything else. The desktop provides the GPU-backed Linux runtime. VS Code bridges them transparently. The same setup works from any client OS, since VS Code Remote SSH and the OpenSSH client config syntax below are identical on macOS, Linux, and Windows (Windows OpenSSH reads `C:\Users\<user>\.ssh\config`).
 
 The workflow:
 
 ```
-MacBook → VS Code Remote SSH → WSL Ubuntu → Ollama / llama.cpp → RTX 3060 Ti
+client → VS Code Remote SSH → WSL Ubuntu → Ollama / llama.cpp → RTX 3060 Ti
 ```
 
-The `~/.ssh/config` entry on the Mac:
+The `~/.ssh/config` entry on the client:
 
 ```ssh
 Host home-ai-node
@@ -282,9 +287,9 @@ Host home-ai-node
     ServerAliveCountMax 5
 ```
 
-Port 2222, not 22. Windows and WSL can both compete for port 22 — Windows runs its own OpenSSH server on that port, and if WSL also tries to bind to 22, one of them loses. The fix is to run the WSL `sshd` on a different port and point VS Code at that. Port 2222 is the conventional choice here.
+Port 2222, not 22. Windows can run its own OpenSSH Server, which is an [optional Windows feature](https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse) (not installed by default on Windows 10 or 11, though it ships installed on Windows Server 2025). If you've installed and enabled it, it binds to port 22, and WSL can't also bind there. The fix is to run the WSL `sshd` on a different port and point VS Code at that. Port 2222 is the conventional choice.
 
-`ServerAliveInterval` and `ServerAliveCountMax` matter too, without them, the SSH connection drops when the session goes idle. With them, the client sends keepalives every 60 seconds and tolerates up to 5 missed responses before giving up.
+`ServerAliveInterval` and `ServerAliveCountMax` matter too. Without them, the SSH connection drops when the session goes idle. With them, the client sends keepalives every 60 seconds and tolerates up to 5 missed responses before giving up.
 
 After connecting, a quick verification that the environment is what it should be:
 
@@ -297,9 +302,9 @@ nvidia-smi           # RTX 3060 Ti visible
 curl http://localhost:11434/api/tags  # Ollama model list
 ```
 
-When all six return expected output, the session is confirmed: right user, right host, Linux on WSL, GPU visible, inference runtime live. From here, I can open terminals, edit files, run eval scripts, and inspect model behavior, all from the Mac, all executing on the desktop's GPU.
+When all six return expected output, the session is confirmed: right user, right host, Linux on WSL, GPU visible, inference runtime live. From here, I can open terminals, edit files, run eval scripts, and inspect model behavior, all from the client, all executing on the desktop's GPU.
 
-This is what actually turns the node into a workstation. Without remote access, you're walking over to the desktop to run experiments. With it, the desktop is just compute, the Mac is where the work happens.
+This is what actually turns the node into a workstation. Without remote access, you're walking over to the desktop to run experiments. With it, the desktop is just compute, and the client is where the work happens.
 
 ---
 
@@ -316,7 +321,7 @@ With the current setup, I can run the same prompt against:
 
 And compare: output content, latency, token counts, behavioral differences, failure modes.
 
-That's the foundation for serious local evaluation work — prompt test suites, refusal behavior comparisons across runtimes and quantization levels, regression tests for model safety properties. A local node means I control the conditions. No API rate limits, no round-trip latency, no runtime behavior I can't inspect. The experiment is reproducible because I own the stack end to end.
+That's the foundation for serious local evaluation work: prompt test suites, refusal behavior comparisons across runtimes and quantization levels, regression tests for model safety properties. A local node means I control the conditions. No API rate limits, no round-trip latency, no runtime behavior I can't inspect. The experiment is reproducible because I own the stack end to end.
 
 ---
 
@@ -339,7 +344,7 @@ MacBook
 
 Part 1 made the machine reachable and persistent. Part 2 made it multi-runtime, controllable, and remotely accessible as a proper development environment.
 
-The next step is measurement — benchmarking scripts, prompt suites, runtime comparison logs, and eventually evaluation harnesses for responsible AI testing. That's where the setup starts earning its keep as research infrastructure rather than just a well-configured home lab.
+The next step is measurement: benchmarking scripts, prompt suites, runtime comparison logs, and eventually evaluation harnesses for responsible AI testing. That's where the setup starts earning its keep as research infrastructure rather than just a well-configured home lab.
 
 ---
 
@@ -357,7 +362,7 @@ vLLM       = production-style high-throughput serving
 
 vLLM is worth reaching for when the goal is concurrent users, batched requests, maximizing throughput, or production-scale deployment. That's not the goal on an 8GB GPU running single-user experiments. It's on the roadmap once the local research workstation is stable.
 
-**Unsloth** fits the training layer, not the serving layer. On a 3060 Ti, the realistic fine-tuning path is QLoRA on 7B models — adapter-based workflows, compact datasets, then export back into the serving stack. That's genuinely useful for research, but it comes after the serving and evaluation stack is stable. Adding training infrastructure too early makes the whole setup harder to reason about.
+**Unsloth** fits the training layer, not the serving layer. On a 3060 Ti, the realistic fine-tuning path is QLoRA on 7B models: adapter-based workflows, compact datasets, then export back into the serving stack. That's genuinely useful for research, but it comes after the serving and evaluation stack is stable. Adding training infrastructure too early makes the whole setup harder to reason about.
 
 The rough sequencing I'm working toward:
 

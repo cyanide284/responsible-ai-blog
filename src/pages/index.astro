@@ -33,26 +33,35 @@ const posts = (await getCollection('blog')).sort(
 			<section class="posts">
 				<h2 class="section-label">Latest</h2>
 				<ul>
-					{posts.map((post) => (
-						<li>
-							<a href={`/blog/${post.id}/`}>
-								<div class="post-meta">
-									<FormattedDate date={post.data.pubDate} />
-									<span class="dot">·</span>
-									<span>{readingTime(post.body ?? '')}</span>
-								</div>
-								<h3>{post.data.title}</h3>
-								{post.data.description && <p class="description">{post.data.description}</p>}
-								{post.data.tags && post.data.tags.length > 0 && (
-									<div class="tags">
-										{post.data.tags.map((tag: string) => (
-											<span class="tag">{tag}</span>
-										))}
+					{posts.map((post) => {
+						const seriesSlug = post.data.series ? post.data.series.toLowerCase().replace(/\s+/g, '-') : '';
+						return (
+							<li>
+								<a href={`/blog/${post.id}/`}>
+									{post.data.series && (
+										<div class={`series-chip series-${seriesSlug}`}>
+											<span class="series-name">{post.data.series}</span>
+											{post.data.seriesPart && <><span class="series-sep">·</span><span class="series-part">Part {post.data.seriesPart}</span></>}
+										</div>
+									)}
+									<div class="post-meta">
+										<FormattedDate date={post.data.pubDate} />
+										<span class="dot">·</span>
+										<span>{post.data.readingTime ?? readingTime(post.body ?? '')}</span>
 									</div>
-								)}
-							</a>
-						</li>
-					))}
+									<h3>{post.data.title}</h3>
+									{post.data.description && <p class="description">{post.data.description}</p>}
+									{post.data.tags && post.data.tags.length > 0 && (
+										<div class="tags">
+											{post.data.tags.map((tag: string) => (
+												<span class="tag">{tag}</span>
+											))}
+										</div>
+									)}
+								</a>
+							</li>
+						);
+					})}
 				</ul>
 			</section>
 			<Subscribe />
@@ -117,6 +126,23 @@ const posts = (await getCollection('blog')).sort(
 	li a:hover h3 {
 		color: var(--accent);
 	}
+	.series-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.65rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.25rem 0.55rem;
+		border-radius: 4px;
+		background: var(--accent);
+		color: white;
+		margin-bottom: 0.6rem;
+	}
+	.series-chip .series-sep { opacity: 0.6; }
+	.series-chip .series-part { font-weight: 500; }
+	.series-chip.series-evaluation-methodology { background: #475569; }
 	.post-meta {
 		font-size: 0.8rem;
 		color: var(--text-subtle);
