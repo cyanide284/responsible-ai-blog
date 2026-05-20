@@ -26,7 +26,7 @@ The reality was less clean. Getting from "installed" to "actually behaves like i
 
 This post covers the infrastructure layer: the problems and fixes that made it work. Part 2 covers adding llama.cpp as a second runtime and what that unlocks for research use.
 
-One note on how this was actually built. I didn't follow a sequence of blog posts. I used an AI assistant to guide me through the setup, the way most people building this stack in 2026 will. That changes what this post is for. The hardest problems I hit weren't ones the AI could have warned me about, because they weren't documented anywhere in a form the model had seen. Writing them down now is partly a field report for humans and partly a small contribution to the corpus the next person's AI assistant will be pulling from. The dual-Windows-account bug below is the clearest example of that.
+One note on how this was actually built. I didn't follow a sequence of blog posts. I used an AI assistant to guide me through the setup, the way most people building this stack in 2026 will. That changes what this post is for. The hardest problems I hit weren't ones the AI could surface usefully: the abstract rules sometimes existed in vendor docs, but the concrete failure patterns and the debugging paths weren't written down anywhere in a form the model could pull from. Writing them down now is partly a field report for humans and partly a small contribution to the corpus the next person's AI assistant will be pulling from. The dual-Windows-account bug below is the clearest example of that.
 
 A note on extractability. My setup is a Windows desktop with a MacBook as the client, but the body of this post uses "client" generically. If you're building the same node and accessing it from a Windows laptop, a Linux box, or another desktop on your LAN, the debugging steps apply identically. If you're going single-machine (AI node and client are the same Windows PC), you can skip the LAN sections (network profile, firewall, mirrored networking) and pick up at the dual-identity WSL trap, which is universal.
 
@@ -293,7 +293,7 @@ With a local node, I can:
 - Test model behavior changes without depending on an API someone else controls
 - Build regression tests for adversarial evaluation experiments
 
-That framing — local node as evaluation infrastructure, not just a chat server — is what Part 2 is about.
+That framing, local node as evaluation infrastructure rather than just a chat server, is what Part 2 is about.
 
 ---
 

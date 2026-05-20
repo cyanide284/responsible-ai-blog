@@ -25,7 +25,7 @@ RTX 3060 Ti
 
 That's useful, but it's still mostly a convenience stack. For research (benchmarking, model comparison, adversarial evaluation), I need more control than Ollama alone provides. That's what Part 2 is about.
 
-A note on extractability, same as Part 1. The diagrams show my specific setup (Windows desktop + MacBook client), but the body uses "client" generically, since VS Code Remote SSH and the OpenSSH config syntax are identical across macOS, Linux, and Windows. If you're running everything on a single Windows PC, the llama.cpp build, GCC pinning, systemd service, and OpenAI-compatible API sections all still apply directly. The remote dev workflow section is the only part that assumes two machines, and even then, swapping the client is a one-line change.
+A note on extractability, same as Part 1. The diagrams show my specific setup (Windows desktop + MacBook client), but the body uses "client" generically, since VS Code Remote SSH and the OpenSSH config syntax are identical across macOS, Linux, and Windows. If you're running everything on a single Windows PC, the llama.cpp build, GCC pinning, systemd service, and OpenAI-compatible API sections all still apply directly. The remote dev workflow section is the only part that assumes two machines, and the same SSH config block works unchanged on whichever client OS you happen to be using.
 
 ---
 
