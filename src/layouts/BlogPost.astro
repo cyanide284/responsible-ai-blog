@@ -14,6 +14,8 @@ type Props = CollectionEntry<'blog'>['data'] & { body?: string };
 const { title, description, pubDate, updatedDate, heroImage, tags, series, seriesPart, readingTime: readingTimeOverride, audio, body } = Astro.props;
 const rt = readingTimeOverride ?? (body ? readingTime(body) : '');
 const seriesSlug = series ? series.toLowerCase().replace(/\s+/g, '-') : '';
+const postSlug = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
+const audioSrc = `/audio/${postSlug}.mp3`;
 ---
 
 <html lang="en">
@@ -53,7 +55,7 @@ const seriesSlug = series ? series.toLowerCase().replace(/\s+/g, '-') : '';
 						<figcaption>Generated with ChatGPT</figcaption>
 					</figure>
 				)}
-				{audio && <AudioPlayer />}
+				{audio && <AudioPlayer src={audioSrc} />}
 				<div class="prose">
 					<slot />
 				</div>
