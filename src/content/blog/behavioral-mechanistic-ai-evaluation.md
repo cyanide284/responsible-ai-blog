@@ -1,8 +1,8 @@
 ---
-title: "Closed-Box, Open-Box: AI Evaluation's Missing Loop"
+title: "Behavioral and Mechanistic: AI Evaluation's Missing Loop"
 description: 'Behavioral evals and mechanistic interpretability are usually framed as two camps. They are not. They are two halves of a method neuropsychology has been refining for decades.'
 pubDate: 2026-05-13
-heroImage: '../../assets/closed-box-open-box-hero.png'
+heroImage: '../../assets/behavioral-mechanistic-evals-hero.png'
 tags: ['Evaluation', 'Methodology', 'Interpretability', 'Red Teaming']
 series: 'Evaluation Methodology'
 seriesPart: 1
@@ -24,9 +24,9 @@ The good news is that we don't have to invent the methodology from scratch. Adja
 
 Most AI safety and evaluation work falls into one of two camps.
 
-**Closed-box (behavioral) evaluation.** Treat the model as a black box. Send it inputs, observe outputs, measure properties of the response. This includes red teaming, jailbreak testing, capability benchmarks (MMLU, HumanEval), refusal evals, factuality checks, and agent task success rates. The system under test is opaque; the methodology is empirical observation of behavior under stimulus.
+**Behavioral evaluation.** Treat the model as a black box. Send it inputs, observe outputs, measure properties of the response. This includes red teaming, jailbreak testing, capability benchmarks (MMLU, HumanEval), refusal evals, factuality checks, and agent task success rates. The system under test is opaque; the methodology is empirical observation of behavior under stimulus.
 
-**Open-box (mechanistic) interpretability.** Crack the model open. Probe activations, run attribution analyses, use sparse autoencoders to find features, identify circuits, perform activation patching. The system is treated as inspectable in principle, with transparency as the aspiration even where current methods only get partial access. The goal is to understand how a behavior arises mechanistically.
+**Mechanistic interpretability.** Crack the model open. Probe activations, run attribution analyses, use sparse autoencoders to find features, identify circuits, perform activation patching. The system is treated as inspectable in principle, with transparency as the aspiration even where current methods only get partial access. The goal is to understand how a behavior arises mechanistically.
 
 These read as separate disciplines. They often publish in different venues, attract different researchers, and use different vocabulary. The default framing is that you pick one and specialize. The pattern of communities citing within themselves rather than across boundaries has started to be measured directly: a December 2025 network analysis of over 6,000 papers across 12 major conferences documented strong community segregation, with over 80% of collaborations occurring within either the safety or ethics community alone ([Roytburg & Miller, 2025](https://arxiv.org/abs/2512.10058), on safety vs. ethics specifically). The same pattern separates behavioral evaluation from mechanistic interpretability, though it hasn't been measured for that specific divide yet.
 
@@ -48,15 +48,15 @@ The name oversells the resemblance. The mechanics diverge in almost every dimens
 
 So the claim is not that models *are* brains, and the methodology I'm pointing to isn't unique to neuropsychology. Pharmacology runs the same loop (drug effect, candidate receptor, agonist or antagonist intervention, behavioral re-test). So does behavioral genetics (phenotype, candidate gene, knockout or knockdown, phenotype re-test). The pattern shows up wherever a field has had to study a system whose internals can't be directly read off the surface, and where intervention is possible. AI sits squarely in that category: we can't fully read the mechanism, but we can patch activations, ablate circuits, and steer features. The loop applies.
 
-I'm drawing the comparison primarily with neuropsychology partly because I've seen it up close, and partly because the closed-box/open-box pairing is unusually visible in clinical neuro work, where both measurements are routinely performed on the same patient at the same time. [Bereska & Gavves (2024)](https://arxiv.org/abs/2404.14082) draw the same parallel in their review of mechanistic interpretability for AI safety, noting that interpretability has historically relied on black-box techniques and is now shifting toward inner mechanistic analysis in ways that mirror neuroscience's own development. The argument doesn't depend on neuropsychology being the closest analog; it depends on the loop being a mature methodology that AI evaluation can adopt.
+I'm drawing the comparison primarily with neuropsychology partly because I've seen it up close, and partly because the behavioral/mechanistic pairing is unusually visible in clinical neuro work, where both measurements are routinely performed on the same patient at the same time. [Bereska & Gavves (2024)](https://arxiv.org/abs/2404.14082) draw the same parallel in their review of mechanistic interpretability for AI safety, noting that interpretability has historically relied on black-box techniques and is now shifting toward inner mechanistic analysis in ways that mirror neuroscience's own development. The argument doesn't depend on neuropsychology being the closest analog; it depends on the loop being a mature methodology that AI evaluation can adopt.
 
-The deeper reason the methodology transfers across these fields is that the systems share an access profile, not a substrate. A drug, a brain, and an AI model are completely different in what they're made of, but the methodological access is the same: you can observe behavior, you can't directly see internals, you can intervene on candidate mechanisms. The closed-box/open-box loop developed for systems with that access profile. It works on any system that has it, regardless of what the system actually is.
+The deeper reason the methodology transfers across these fields is that the systems share an access profile, not a substrate. A drug, a brain, and an AI model are completely different in what they're made of, but the methodological access is the same: you can observe behavior, you can't directly see internals, you can intervene on candidate mechanisms. The behavioral/mechanistic loop developed for systems with that access profile. It works on any system that has it, regardless of what the system actually is.
 
 When we study any system whose internals can't be fully read off the surface, the methodological problem has a shape. Several mature fields have been working that shape for decades. There's no need to start from scratch.
 
 ---
 
-## What closed-box gets right (and where the opportunity is)
+## What behavioral evaluation gets right (and where the opportunity is)
 
 Behavioral evaluation is the workhorse of AI safety today, for good reasons. It scales (you can test millions of prompts). It's reproducible at the API level (same input, same model, comparable output). It's the closest thing the field has to standardized measurement. Without it, claims about model capability or safety are anecdote.
 
@@ -75,7 +75,7 @@ Behavioral psychology developed pre-registration, multiple-comparisons correctio
 
 ---
 
-## What open-box gets right (and where the opportunity is)
+## What mechanistic interpretability gets right (and where the opportunity is)
 
 Mechanistic interpretability is the discipline that says "behavior isn't enough; we need to understand why." It tries to identify circuits, features, and computational structures inside the model that explain its outputs. When it works, it gives you a mechanistic story: this attention head, in this layer, in this context, computes this thing.
 
@@ -96,13 +96,13 @@ Interpretability is younger than fMRI, and recent work has started naming the an
 The point of bringing in the neuropsychology framing isn't "interpretability is bad" or "behavioral evals are sloppy." Both methods are doing their part. The opportunity is that they're halves of a single workflow, and most of the value sits in the loop between them.
 
 ```
-Closed-box surfaces a behavioral phenomenon
+Behavioral evaluation surfaces a phenomenon
    ↓
-Open-box investigates the candidate mechanism
+Mechanistic interpretability investigates the candidate mechanism
    ↓
 Mechanism suggests a hypothesis (steer / edit / ablate)
    ↓
-Closed-box validates the intervention
+Behavioral evaluation validates the intervention
    ↓
 (loop)
 ```
@@ -151,8 +151,8 @@ The setup: 34 patients underwent decompressive craniectomy and later cranioplast
 
 The methodology paired two measurements on the same patients at the same time points:
 
-- **Open-box measurement:** technetium-99m SPECT brain perfusion imaging, 7 days before and 3 months after cranioplasty.
-- **Closed-box measurement:** Glasgow Outcome Scale (GOS), Glasgow Coma Scale, and a battery of cognitive tests at the same time points.
+- **Mechanistic measurement:** technetium-99m SPECT brain perfusion imaging, 7 days before and 3 months after cranioplasty.
+- **Behavioral measurement:** Glasgow Outcome Scale (GOS), Glasgow Coma Scale, and a battery of cognitive tests at the same time points.
 
 The findings, taken directly from the paper's abstract:
 
@@ -188,7 +188,7 @@ Most of what I've outlined here is methodology, not tooling. The next set of pos
 - How to wire interpretability probes alongside a behavioral eval, on the same prompt set, on the same model.
 - Specific failure modes where each side alone would draw the wrong conclusion.
 
-This is also why the home AI node series matters in parallel: controlling the entire stack end to end is a prerequisite for paired-measurement designs of this kind, because open-box probes aren't possible on an API-only model.
+This is also why the home AI node series matters in parallel: controlling the entire stack end to end is a prerequisite for paired-measurement designs of this kind, because mechanistic probes aren't possible on an API-only model.
 
 ---
 
