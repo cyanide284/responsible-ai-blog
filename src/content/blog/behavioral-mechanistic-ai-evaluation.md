@@ -120,9 +120,9 @@ This is methodology, not magic. It's also barely happening at scale.
 
 ---
 
-## A worked example in AI: Golden Gate Claude
+## A worked example: causal loop closure in Golden Gate Claude
 
-The clearest public demonstration of the loop done well *in AI* is from Anthropic's [Scaling Monosemanticity](https://transformer-circuits.pub/2024/scaling-monosemanticity/) work, published in May 2024 alongside a public demo called [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude).
+The clearest public demonstration of the loop closing causally in AI is from Anthropic's [Scaling Monosemanticity](https://transformer-circuits.pub/2024/scaling-monosemanticity/) work, published in May 2024 alongside a public demo called [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude). The mechanism is identified, the intervention is derived from that finding, and the behavioral effect tests whether the mechanism is actually causal.
 
 The flow:
 
@@ -143,9 +143,9 @@ The Golden Gate work also makes the limit visible: identifying a feature that co
 
 ---
 
-## A precedent from outside AI
+## A precedent from outside AI: integrated measurement infrastructure
 
-If the Golden Gate work shows the loop is possible in AI, the next question is what mature versions of this methodology look like. For that, the clearest example I've seen isn't from AI at all. It's a 2017 paper from the Department of Neurosurgery at PGIMER Chandigarh ([Shahid, Mohanty et al., *Journal of Neurosurgery*](https://thejns.org/view/journals/j-neurosurg/128/1/article-p229.xml)) whose design is structurally analogous to what AI evaluation could adopt.
+Golden Gate Claude shows what causal loop closure looks like in AI: a specific feature identified, a targeted intervention derived from that finding, behavioral change in the predicted direction. The harder, complementary question is what the surrounding *measurement infrastructure* should look like: how to set up integrated behavioral and mechanistic measurement so that the loop can run repeatedly, on the same subjects, around the same intervention. For that, the clearest example I've seen isn't from AI at all. It's a 2017 paper from the Department of Neurosurgery at PGIMER Chandigarh ([Shahid, Mohanty et al., *Journal of Neurosurgery*](https://thejns.org/view/journals/j-neurosurg/128/1/article-p229.xml)).
 
 The setup: 34 patients underwent decompressive craniectomy and later cranioplasty (the bone flap is replaced). The question was whether the cranioplasty improves outcomes, and what those outcomes look like.
 
@@ -160,9 +160,21 @@ The findings, taken directly from the paper's abstract:
 - Approximately 35.3% to 90.9% of patients showed cognitive improvement post-cranioplasty across the various tests.
 - 94% of patients showed improvement in cerebral perfusion on SPECT across different brain lobes.
 
-Neither half of the methodology would have been sufficient on its own. The behavioral improvements alone could be attributed to anything (natural recovery, expectation effects, measurement noise). The perfusion improvements alone don't tell you what the patient can actually do. Together, and tied to a structural intervention (the surgery itself), the case for a coherent causal story is much stronger: the structural change improved blood flow, the blood flow tracked with cognitive function, and the behavioral measures confirmed the effect at the level of the patient's actual life. (The paper is observational rather than randomized, so the causal language is qualified, but the structural design is what matters here.)
+Neither half of the methodology would have been sufficient on its own. The behavioral improvements alone could be attributed to anything (natural recovery, expectation effects, measurement noise). The perfusion improvements alone don't tell you what the patient can actually do. Together, and tied to a structural intervention (the surgery itself), the case for a coherent causal story is much stronger: the structural change improved blood flow, the blood flow tracked with cognitive function, and the behavioral measures confirmed the effect at the level of the patient's actual life.
 
-That's the rigor worth importing. Behavior, mechanism, intervention, and behavioral re-test, all in the same study, on the same subjects. Right now, in AI, those four pieces typically live in different papers, by different authors, on different models.
+It's worth being honest about what this design does and doesn't do. The cranioplasty paper is not a strict causal mechanism-to-behavior test in the Golden Gate Claude sense. The intervention is clinical rather than derived from a mechanistic hypothesis, and the design can't fully rule out alternative explanations for why both perfusion and cognition improved together (recovery time alone, intracranial pressure changes, other downstream effects of the surgery). The paper explicitly notes it is observational rather than randomized.
+
+What the cranioplasty study does demonstrate, and demonstrate well, is the surrounding *measurement infrastructure*: behavioral and mechanistic data captured on the same subjects, at the same time points, around the same intervention, so that paired before-and-after analysis is possible. Right now in AI, those pieces typically live in different papers, by different authors, on different models. Golden Gate Claude shows what the causal loop looks like when it closes. The cranioplasty design shows what the measurement scaffolding should look like so the loop can run at all. Both matter. They are doing different jobs.
+
+---
+
+## Why AI can exceed this precedent
+
+There's an observation worth naming here, because it strengthens the case rather than weakening it. Neuropsychology has refined the loop methodology under severe access constraints. You cannot read individual neurons in a living patient. You cannot run counterfactual versions of the same brain. You cannot do precise, targeted, repeatable ablations on demand. Sample sizes are bounded by how many patients meet inclusion criteria; the cranioplasty study above had 34 patients across a multi-year window.
+
+AI researchers do not face those constraints. We have full weight access. We can train counterfactual model versions and compare them directly. We can ablate with surgical precision and reverse the ablation cleanly. We can run thousands of "subjects" by running thousands of model copies in parallel. We can pre-register, replicate, and counterfactually probe in ways clinical neuroscience structurally cannot.
+
+The implication is that the bio-medical loop is the floor for AI methodology, not the ceiling. The cranioplasty paper had to settle for paired observational measurement around a clinical intervention because that is what is ethically and practically achievable in human neurosurgery. AI does not have that constraint. The methodology to import is not just "do what they did," but "do what they would do if they could," which AI is uniquely positioned to actually achieve.
 
 ---
 
