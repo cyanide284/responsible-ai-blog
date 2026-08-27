@@ -11,7 +11,7 @@ import AudioPlayer from '../components/AudioPlayer.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & { body?: string };
 
-const { title, description, pubDate, updatedDate, heroImage, tags, series, seriesPart, readingTime: readingTimeOverride, audio, body } = Astro.props;
+const { title, description, author, pubDate, updatedDate, heroImage, tags, series, seriesPart, readingTime: readingTimeOverride, audio, body } = Astro.props;
 const rt = readingTimeOverride ?? (body ? readingTime(body) : '');
 const seriesSlug = series ? series.toLowerCase().replace(/\s+/g, '-') : '';
 const postSlug = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
@@ -34,6 +34,7 @@ const audioSrc = `/audio/${postSlug}.mp3`;
 						</div>
 					)}
 					<div class="post-meta">
+						{author && <><span class="author">{author}</span><span class="dot">·</span></>}
 						<FormattedDate date={pubDate} />
 						{rt && <><span class="dot">·</span><span>{rt}</span></>}
 						{updatedDate && (
@@ -99,6 +100,7 @@ const audioSrc = `/audio/${postSlug}.mp3`;
 		margin-bottom: 0.75rem;
 	}
 	.dot { color: var(--border); }
+	.author { font-weight: 600; color: var(--text-muted); }
 	.updated { font-style: italic; }
 	.post-header h1 {
 		font-size: 2.2rem;

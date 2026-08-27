@@ -8,6 +8,9 @@ const blog = defineCollection({
 		z.object({
 			title: z.string(),
 			description: z.string(),
+			// Defaults so existing posts need no change. Set explicitly on posts
+			// by anyone else.
+			author: z.string().optional().default('Abhinav Mohanty'),
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
