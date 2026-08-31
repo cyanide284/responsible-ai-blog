@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340"
+     width="760" height="340" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" role="img">
+  <rect width="760" height="340" fill="#fafaf8"/>
+  <text x="32" y="38" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-weight="600"
+        fill="#1c1917">The same context, budgeted two ways</text>
+  <text x="32" y="60" font-size="13" fill="#78716c">IQ4_NL weights + q8_0 KV cache at 131,072 tokens, on a 24 GB card</text>
+  <text x="138" y="124" font-size="13" fill="#78716c" text-anchor="end">counting all 64</text>
+  <text x="138" y="140" font-size="12.5" font-weight="600" fill="#b45309" text-anchor="end">does not fit</text>
+  <rect x="152" y="106" width="266.3" height="40" fill="#1c1917" opacity="0.82"/>
+  <rect x="418.3" y="106" width="297.3" height="40" fill="#b45309"/>
+  <text x="703.7" y="132" font-size="14" font-weight="700" fill="#fafaf8" text-anchor="end">34.6 GB</text>
+  <text x="138" y="196" font-size="13" fill="#78716c" text-anchor="end">counting the 16</text>
+  <text x="138" y="212" font-size="12.5" font-weight="600" fill="#0f766e" text-anchor="end">fits, with room</text>
+  <rect x="152" y="178" width="266.3" height="40" fill="#1c1917" opacity="0.82"/>
+  <rect x="418.3" y="178" width="74.3" height="40" fill="#0f766e"/>
+  <text x="480.7" y="204" font-size="14" font-weight="700" fill="#fafaf8" text-anchor="end">20.9 GB</text>
+  <line x1="543.2" y1="94" x2="543.2" y2="232" stroke="#1c1917" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="551.2" y="90" font-size="12.5" font-weight="600" fill="#1c1917">24 GB card</text>
+  <rect x="152" y="253" width="13" height="13" fill="#1c1917" opacity="0.82"/>
+  <text x="172" y="264" font-size="13" fill="#78716c">weights 16.34 GB</text>
+  <rect x="320" y="253" width="13" height="13" fill="#0f766e"/>
+  <text x="340" y="264" font-size="13" fill="#78716c">KV cache</text>
+  <text x="32" y="320" font-size="13.5" fill="#1c1917">The 4× error is the difference between a <tspan font-weight="600">32K</tspan> context and a <tspan font-weight="600" fill="#0f766e">131K</tspan> one.</text>
+</svg>
