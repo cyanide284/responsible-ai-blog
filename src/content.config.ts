@@ -14,7 +14,13 @@ const blog = defineCollection({
 			// Optional profile link for the byline. Guest posts set it so the
 			// author is reachable without adding their socials to the site
 			// header, which belongs to the site owner.
-			authorUrl: z.string().url().optional(),
+			//
+			// The scheme is constrained deliberately. z.string().url() checks
+			// syntax only, so it accepts javascript: and data:, and this value
+			// is rendered straight into an href — a post file would be enough
+			// to land script in the site's origin. Rejecting it here fails the
+			// build with a named error instead.
+			authorUrl: z.url({ protocol: /^https?$/ }).optional(),
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
