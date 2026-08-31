@@ -6,10 +6,64 @@
 	--text-subtle: #a8a29e;
 	--accent: #0f766e;
 	--accent-hover: #0d9488;
+	/* Foreground for anything sitting ON --accent (filled buttons, chips).
+	   --accent flips from dark teal to light mint between themes, so a
+	   hardcoded white here is unreadable in dark mode. */
+	--on-accent: #ffffff;
+	/* Raised surfaces: inputs, controls. Distinct from --bg-subtle, which is
+	   a recessed tint. */
+	--surface: #ffffff;
 	--border: #e7e5e0;
+	/* Sticky header sits over content, so it needs the page colour with alpha
+	   rather than a token, and it has to change with the theme. */
+	--header-bg: rgba(250, 250, 248, 0.94);
+	/* Figures are authored light-only. In dark mode they sit on their own
+	   light panel rather than being inverted. */
+	--figure-surface: transparent;
+	--figure-pad: 0;
 	--font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
 	--font-body: var(--font-atkinson), system-ui, sans-serif;
 	--font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, monospace;
+	color-scheme: light;
+}
+
+/* Dark values live in one place and are applied twice: once for the system
+   preference (unless the reader has explicitly chosen light) and once for an
+   explicit choice, so the toggle wins in both directions. */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		--bg: #16161a;
+		--bg-subtle: #1f1f24;
+		--text: #e8e6e3;
+		--text-muted: #a3a09b;
+		--text-subtle: #7c7973;
+		--accent: #5eead4;
+		--accent-hover: #99f6e4;
+		--on-accent: #12222a;
+		--surface: #24242b;
+		--border: #2e2e35;
+		--header-bg: rgba(22, 22, 26, 0.94);
+		--figure-surface: #f4f4f1;
+		--figure-pad: 0.75rem;
+		color-scheme: dark;
+	}
+}
+
+:root[data-theme='dark'] {
+	--bg: #16161a;
+	--bg-subtle: #1f1f24;
+	--text: #e8e6e3;
+	--text-muted: #a3a09b;
+	--text-subtle: #7c7973;
+	--accent: #5eead4;
+	--accent-hover: #99f6e4;
+	--on-accent: #12222a;
+	--surface: #24242b;
+	--border: #2e2e35;
+	--header-bg: rgba(22, 22, 26, 0.94);
+	--figure-surface: #f4f4f1;
+	--figure-pad: 0.75rem;
+	color-scheme: dark;
 }
 
 *, *::before, *::after {
@@ -211,6 +265,16 @@ img {
 	max-width: 100%;
 	height: auto;
 	border-radius: 4px;
+}
+
+/* Charts are SVGs with baked-in light colours. An external SVG loaded through
+   <img> cannot see the page's theme, so instead of inverting it (which wrecks
+   the palette) it gets a light surface to sit on in dark mode. */
+.prose img[src^='/charts/'] {
+	background: var(--figure-surface);
+	padding: var(--figure-pad);
+	border-radius: 6px;
+	display: block;
 }
 
 /* Tags */

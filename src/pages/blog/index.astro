@@ -98,12 +98,12 @@ const posts = (await getCollection('blog')).sort(
 		padding: 0.25rem 0.55rem;
 		border-radius: 4px;
 		background: var(--accent);
-		color: white;
+		color: var(--on-accent);
 		margin-bottom: 0.6rem;
 	}
 	.series-chip .series-sep { opacity: 0.6; }
 	.series-chip .series-part { font-weight: 500; }
-	.series-chip.series-evaluation-methodology { background: #475569; }
+	.series-chip.series-evaluation-methodology { background: #475569; color: #fff; }
 	.post-meta {
 		font-size: 0.8rem;
 		color: var(--text-subtle);

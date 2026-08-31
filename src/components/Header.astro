@@ -31,6 +31,15 @@ import HeaderLink from './HeaderLink.astro';
 					<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
 				</svg>
 			</a>
+			<button id="theme-toggle" type="button" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false">
+				<svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+					<circle cx="12" cy="12" r="4.2" />
+					<path d="M12 2.4v2.2M12 19.4v2.2M4.2 12H2M22 12h-2.2M6.1 6.1 4.6 4.6M19.4 19.4l-1.5-1.5M17.9 6.1l1.5-1.5M4.6 19.4l1.5-1.5" />
+				</svg>
+				<svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="currentColor">
+					<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+				</svg>
+			</button>
 		</div>
 	</nav>
 </header>
@@ -40,7 +49,7 @@ import HeaderLink from './HeaderLink.astro';
 		position: sticky;
 		top: 0;
 		z-index: 100;
-		background: rgba(250, 250, 248, 0.94);
+		background: var(--header-bg);
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
 		border-bottom: 1px solid var(--border);
@@ -86,8 +95,74 @@ import HeaderLink from './HeaderLink.astro';
 	}
 	.social-links a:hover { color: var(--accent); }
 
+	#theme-toggle {
+		background: none;
+		border: none;
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+		color: var(--text-subtle);
+		display: flex;
+		align-items: center;
+		transition: color 0.15s;
+		font: inherit;
+	}
+	#theme-toggle:hover { color: var(--accent); }
+	#theme-toggle:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+		border-radius: 3px;
+	}
+
+	/* Show the icon for the theme you would switch *to*. */
+	#theme-toggle .icon-moon { display: block; }
+	#theme-toggle .icon-sun { display: none; }
+	@media (prefers-color-scheme: dark) {
+		:global(html:not([data-theme='light'])) #theme-toggle .icon-moon { display: none; }
+		:global(html:not([data-theme='light'])) #theme-toggle .icon-sun { display: block; }
+	}
+	:global(html[data-theme='dark']) #theme-toggle .icon-moon { display: none; }
+	:global(html[data-theme='dark']) #theme-toggle .icon-sun { display: block; }
+
 	@media (max-width: 640px) {
 		nav { grid-template-columns: 1fr auto; }
-		.social-links { display: none; }
+		.social-links a { display: none; }
+		.social-links { gap: 0; }
 	}
 </style>
+
+<script is:inline>
+	(function () {
+		var btn = document.getElementById('theme-toggle');
+		if (!btn) return;
+		var root = document.documentElement;
+
+		function current() {
+			var set = root.getAttribute('data-theme');
+			if (set) return set;
+			return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		}
+
+		function sync() {
+			btn.setAttribute('aria-pressed', current() === 'dark' ? 'true' : 'false');
+		}
+
+		btn.addEventListener('click', function () {
+			var next = current() === 'dark' ? 'light' : 'dark';
+			root.setAttribute('data-theme', next);
+			try {
+				localStorage.setItem('theme', next);
+			} catch (e) {
+				/* preference will not survive the session; the toggle still works */
+			}
+			sync();
+		});
+
+		// Follow the OS while the reader has not made an explicit choice.
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+			if (!root.getAttribute('data-theme')) sync();
+		});
+
+		sync();
+	})();
+</script>

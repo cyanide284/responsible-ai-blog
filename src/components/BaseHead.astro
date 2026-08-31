@@ -18,6 +18,22 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const { title, description, image = FallbackImage } = Astro.props;
 ---
 
+<!-- Theme, applied before first paint so a dark-mode reader never sees a white
+     flash. Inline and synchronous on purpose: deferring it reintroduces the
+     flash. Storage access is wrapped because private windows can throw. -->
+<script is:inline>
+	(function () {
+		try {
+			var stored = localStorage.getItem('theme');
+			if (stored === 'dark' || stored === 'light') {
+				document.documentElement.setAttribute('data-theme', stored);
+			}
+		} catch (e) {
+			/* no stored preference available; system preference applies */
+		}
+	})();
+</script>
+
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
