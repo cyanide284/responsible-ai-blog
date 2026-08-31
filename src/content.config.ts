@@ -11,6 +11,10 @@ const blog = defineCollection({
 			// Defaults so existing posts need no change. Set explicitly on posts
 			// by anyone else.
 			author: z.string().optional().default('Abhinav Mohanty'),
+			// Optional profile link for the byline. Guest posts set it so the
+			// author is reachable without adding their socials to the site
+			// header, which belongs to the site owner.
+			authorUrl: z.string().url().optional(),
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
