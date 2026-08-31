@@ -17,7 +17,7 @@ Both mistakes came from the same place: opening `config.json`, reading `num_hidd
 
 [Qwen3.8-27B](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF) is a dense 27-billion-parameter model with a 262,144-token context window. I wanted it on a single RTX 3090: 24 GB, Ampere, a card that has been mid-range for three years. The conventional wisdom is that you pick your quantization, subtract the weights from your VRAM, and whatever is left is your context budget. That arithmetic is wrong here in a way that matters, and correcting it is the difference between a 32K context and a 131K one.
 
-Abhinav's [Home AI Lab, part 2](/blog/home-ai-node-part-2/) got [llama.cpp](https://github.com/ggml-org/llama.cpp) running alongside Ollama. This is one model on one card: what fits, what makes it fast, and what the numbers say once you stop estimating and start measuring.
+Abhinav's [Home AI Lab, part 2](/blog/home-ai-node-part-2/) got llama.cpp running alongside Ollama. This is one model on one card: what fits, what makes it fast, and what the numbers say once you stop estimating and start measuring.
 
 ## The layers do not all cost the same
 
