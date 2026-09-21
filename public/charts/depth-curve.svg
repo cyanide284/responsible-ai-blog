@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430"
+     width="760" height="430" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" role="img">
+  <rect width="760" height="430" fill="#fafaf8"/>
+  <text x="32" y="38" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-weight="600"
+        fill="#1c1917">Filling the context is not free</text>
+  <text x="32" y="60" font-size="13" fill="#78716c">Code generation, 500-token replies, 75% power — decode rate by how much context is already in the cache</text>
+  <line x1="78" y1="322.0" x2="636" y2="322.0" stroke="#e7e5e0"/>
+  <text x="68" y="326.0" font-size="11.5" fill="#a8a29e" text-anchor="end">0</text>
+  <line x1="78" y1="263.7" x2="636" y2="263.7" stroke="#e7e5e0"/>
+  <text x="68" y="267.7" font-size="11.5" fill="#a8a29e" text-anchor="end">20</text>
+  <line x1="78" y1="205.4" x2="636" y2="205.4" stroke="#e7e5e0"/>
+  <text x="68" y="209.4" font-size="11.5" fill="#a8a29e" text-anchor="end">40</text>
+  <line x1="78" y1="147.1" x2="636" y2="147.1" stroke="#e7e5e0"/>
+  <text x="68" y="151.1" font-size="11.5" fill="#a8a29e" text-anchor="end">60</text>
+  <polyline points="78.0,133.5 117.7,134.3 237.0,142.5 396.0,164.8 614.6,184.2" fill="none" stroke="#0f766e" stroke-width="2.5"/>
+  <circle cx="78.0" cy="133.5" r="4" fill="#0f766e"/>
+  <circle cx="117.7" cy="134.3" r="4" fill="#0f766e"/>
+  <circle cx="237.0" cy="142.5" r="4" fill="#0f766e"/>
+  <circle cx="396.0" cy="164.8" r="4" fill="#0f766e"/>
+  <circle cx="614.6" cy="184.2" r="4" fill="#0f766e"/>
+  <text x="624.6" y="188.2" font-size="12.5" font-weight="600" fill="#0f766e">n=4  (shipped)</text>
+  <text x="624.6" y="203.2" font-size="11.5" fill="#a8a29e">47.3 tok/s</text>
+  <polyline points="78.0,143.2 117.7,147.1 237.0,167.1 396.0,186.3 614.6,208.4" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-dasharray="6 3"/>
+  <circle cx="78.0" cy="143.2" r="4" fill="#0d9488"/>
+  <circle cx="117.7" cy="147.1" r="4" fill="#0d9488"/>
+  <circle cx="237.0" cy="167.1" r="4" fill="#0d9488"/>
+  <circle cx="396.0" cy="186.3" r="4" fill="#0d9488"/>
+  <circle cx="614.6" cy="208.4" r="4" fill="#0d9488"/>
+  <text x="624.6" y="212.4" font-size="12.5" font-weight="600" fill="#0d9488">n=2</text>
+  <text x="624.6" y="227.4" font-size="11.5" fill="#a8a29e">39.0 tok/s</text>
+  <polyline points="78.0,212.5 117.7,218.1 237.0,231.7 396.0,246.9 614.6,262.4" fill="none" stroke="#78716c" stroke-width="2.5" stroke-dasharray="6 3"/>
+  <circle cx="78.0" cy="212.5" r="4" fill="#78716c"/>
+  <circle cx="117.7" cy="218.1" r="4" fill="#78716c"/>
+  <circle cx="237.0" cy="231.7" r="4" fill="#78716c"/>
+  <circle cx="396.0" cy="246.9" r="4" fill="#78716c"/>
+  <circle cx="614.6" cy="262.4" r="4" fill="#78716c"/>
+  <text x="624.6" y="266.4" font-size="12.5" font-weight="600" fill="#78716c">no drafter</text>
+  <text x="624.6" y="281.4" font-size="11.5" fill="#a8a29e">20.5 tok/s</text>
+  <text x="78.0" y="344" font-size="11.5" fill="#78716c" text-anchor="middle">0</text>
+  <text x="117.7" y="344" font-size="11.5" fill="#78716c" text-anchor="middle">8K</text>
+  <text x="237.0" y="344" font-size="11.5" fill="#78716c" text-anchor="middle">32K</text>
+  <text x="396.0" y="344" font-size="11.5" fill="#78716c" text-anchor="middle">64K</text>
+  <text x="614.6" y="344" font-size="11.5" fill="#78716c" text-anchor="middle">110K</text>
+  <text x="357.0" y="366" font-size="12" fill="#a8a29e" text-anchor="middle">context already in the cache (tokens)</text>
+  <text x="68" y="104" font-size="12" font-weight="600" fill="#1c1917" text-anchor="end">tok/s</text>
+  <text x="32" y="392" font-size="13.5" fill="#1c1917">The shipped config gives up <tspan font-weight="600" fill="#0f766e">27%</tspan> between an empty cache and a full one. Without the drafter it is 45%.</text>
+  <text x="32" y="412" font-size="12.5" fill="#78716c">The drafter hands back part of that loss — and hands back more of it the deeper you go.</text>
+</svg>
