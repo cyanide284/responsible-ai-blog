@@ -57,7 +57,7 @@ Last post I found `--spec-draft-n-max 4` beat the inherited `2` by 4.3–6.9% an
 
 A difference counts as real here only when it clears the two configurations' standard deviations added together, over four repeats per cell run in order-reversed blocks. That is a conservative threshold of my own rather than a significance test, and it applies everywhere else in the post.
 
-The shallow sweep understated this by roughly a factor of four.
+The advantage at 110K is roughly four times the advantage at an empty cache.
 
 I ran the same ladder with reasoning on as well, at the default effort. Those runs produced no code at all, for reasons the next section covers, so the rate they report is the rate of thinking and I have kept them out of the table above. The two draft depths can still be compared against each other on it, and nothing separated them.
 
@@ -148,7 +148,7 @@ Still worth it for interactive coding, where you rarely fill 131K. That 131K is 
 { "model": "qwen3.8-27b", "messages": [...], "reasoning_effort": "low" }
 ```
 
-Leave it out and the template picks `xhigh`. `low` costs little in decode rate and a good deal more in wall time, for the reasons in the table above.
+Leave it out and the template picks `xhigh`. On this coding prompt `low` cost 6.9% in decode rate but 53% in wall time, for the reason in the table above.
 
 Check the level you send against the template rather than against llama.cpp's help, which advertises `minimal` through `max` as though any of them were available. This checkpoint's template honours three of those, quietly rewrites `high`, and raises on the rest. That list has changed between template revisions, so read the one you actually downloaded.
 
